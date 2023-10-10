@@ -19,11 +19,26 @@ struct GridSampleT;
 struct ImageProcessParam;
 struct ImageProcessParamT;
 
+struct Landmarks2TransformMatrixParam;
+struct Landmarks2TransformMatrixParamT;
+
+struct TransformLandmarksParam;
+struct TransformLandmarksParamT;
+
+struct TransformTensorBilinearParam;
+struct TransformTensorBilinearParamT;
+
 inline const flatbuffers::TypeTable *TensorConvertInfoTypeTable();
 
 inline const flatbuffers::TypeTable *GridSampleTypeTable();
 
 inline const flatbuffers::TypeTable *ImageProcessParamTypeTable();
+
+inline const flatbuffers::TypeTable *Landmarks2TransformMatrixParamTypeTable();
+
+inline const flatbuffers::TypeTable *TransformLandmarksParamTypeTable();
+
+inline const flatbuffers::TypeTable *TransformTensorBilinearParamTypeTable();
 
 enum SampleMode {
   SampleMode_BILINEAR = 0,
@@ -528,6 +543,245 @@ inline flatbuffers::Offset<ImageProcessParam> CreateImageProcessParam(
 
 flatbuffers::Offset<ImageProcessParam> CreateImageProcessParam(flatbuffers::FlatBufferBuilder &_fbb, const ImageProcessParamT *_o, const flatbuffers::rehasher_function_t *_rehasher = nullptr);
 
+struct Landmarks2TransformMatrixParamT : public flatbuffers::NativeTable {
+  typedef Landmarks2TransformMatrixParam TableType;
+  int32_t left_rotation_idx;
+  int32_t output_height;
+  int32_t output_width;
+  int32_t right_rotation_idx;
+  float scale_x;
+  float scale_y;
+  std::vector<int32_t> subset_idxs;
+  float target_rotation_radians;
+  Landmarks2TransformMatrixParamT()
+      : left_rotation_idx(0),
+        output_height(0),
+        output_width(0),
+        right_rotation_idx(0),
+        scale_x(0.0f),
+        scale_y(0.0f),
+        target_rotation_radians(0.0f) {
+  }
+};
+
+struct Landmarks2TransformMatrixParam FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef Landmarks2TransformMatrixParamT NativeTableType;
+  static const flatbuffers::TypeTable *MiniReflectTypeTable() {
+    return Landmarks2TransformMatrixParamTypeTable();
+  }
+  int32_t left_rotation_idx() const {
+    return GetField<int32_t>(4, 0);
+  }
+  int32_t output_height() const {
+    return GetField<int32_t>(6, 0);
+  }
+  int32_t output_width() const {
+    return GetField<int32_t>(8, 0);
+  }
+  int32_t right_rotation_idx() const {
+    return GetField<int32_t>(10, 0);
+  }
+  float scale_x() const {
+    return GetField<float>(12, 0.0f);
+  }
+  float scale_y() const {
+    return GetField<float>(14, 0.0f);
+  }
+  const flatbuffers::Vector<int32_t> *subset_idxs() const {
+    return GetPointer<const flatbuffers::Vector<int32_t> *>(16);
+  }
+  float target_rotation_radians() const {
+    return GetField<float>(18, 0.0f);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int32_t>(verifier, 4) &&
+           VerifyField<int32_t>(verifier, 6) &&
+           VerifyField<int32_t>(verifier, 8) &&
+           VerifyField<int32_t>(verifier, 10) &&
+           VerifyField<float>(verifier, 12) &&
+           VerifyField<float>(verifier, 14) &&
+           VerifyOffset(verifier, 16) &&
+           verifier.VerifyVector(subset_idxs()) &&
+           VerifyField<float>(verifier, 18) &&
+           verifier.EndTable();
+  }
+  Landmarks2TransformMatrixParamT *UnPack(const flatbuffers::resolver_function_t *_resolver = nullptr) const;
+  void UnPackTo(Landmarks2TransformMatrixParamT *_o, const flatbuffers::resolver_function_t *_resolver = nullptr) const;
+  static flatbuffers::Offset<Landmarks2TransformMatrixParam> Pack(flatbuffers::FlatBufferBuilder &_fbb, const Landmarks2TransformMatrixParamT* _o, const flatbuffers::rehasher_function_t *_rehasher = nullptr);
+};
+
+struct Landmarks2TransformMatrixParamBuilder {
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_left_rotation_idx(int32_t left_rotation_idx) {
+    fbb_.AddElement<int32_t>(4, left_rotation_idx, 0);
+  }
+  void add_output_height(int32_t output_height) {
+    fbb_.AddElement<int32_t>(6, output_height, 0);
+  }
+  void add_output_width(int32_t output_width) {
+    fbb_.AddElement<int32_t>(8, output_width, 0);
+  }
+  void add_right_rotation_idx(int32_t right_rotation_idx) {
+    fbb_.AddElement<int32_t>(10, right_rotation_idx, 0);
+  }
+  void add_scale_x(float scale_x) {
+    fbb_.AddElement<float>(12, scale_x, 0.0f);
+  }
+  void add_scale_y(float scale_y) {
+    fbb_.AddElement<float>(14, scale_y, 0.0f);
+  }
+  void add_subset_idxs(flatbuffers::Offset<flatbuffers::Vector<int32_t>> subset_idxs) {
+    fbb_.AddOffset(16, subset_idxs);
+  }
+  void add_target_rotation_radians(float target_rotation_radians) {
+    fbb_.AddElement<float>(18, target_rotation_radians, 0.0f);
+  }
+  explicit Landmarks2TransformMatrixParamBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  Landmarks2TransformMatrixParamBuilder &operator=(const Landmarks2TransformMatrixParamBuilder &);
+  flatbuffers::Offset<Landmarks2TransformMatrixParam> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<Landmarks2TransformMatrixParam>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<Landmarks2TransformMatrixParam> CreateLandmarks2TransformMatrixParam(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t left_rotation_idx = 0,
+    int32_t output_height = 0,
+    int32_t output_width = 0,
+    int32_t right_rotation_idx = 0,
+    float scale_x = 0.0f,
+    float scale_y = 0.0f,
+    flatbuffers::Offset<flatbuffers::Vector<int32_t>> subset_idxs = 0,
+    float target_rotation_radians = 0.0f) {
+  Landmarks2TransformMatrixParamBuilder builder_(_fbb);
+  builder_.add_target_rotation_radians(target_rotation_radians);
+  builder_.add_subset_idxs(subset_idxs);
+  builder_.add_scale_y(scale_y);
+  builder_.add_scale_x(scale_x);
+  builder_.add_right_rotation_idx(right_rotation_idx);
+  builder_.add_output_width(output_width);
+  builder_.add_output_height(output_height);
+  builder_.add_left_rotation_idx(left_rotation_idx);
+  return builder_.Finish();
+}
+
+flatbuffers::Offset<Landmarks2TransformMatrixParam> CreateLandmarks2TransformMatrixParam(flatbuffers::FlatBufferBuilder &_fbb, const Landmarks2TransformMatrixParamT *_o, const flatbuffers::rehasher_function_t *_rehasher = nullptr);
+
+struct TransformLandmarksParamT : public flatbuffers::NativeTable {
+  typedef TransformLandmarksParam TableType;
+  TransformLandmarksParamT() {
+  }
+};
+
+struct TransformLandmarksParam FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TransformLandmarksParamT NativeTableType;
+  static const flatbuffers::TypeTable *MiniReflectTypeTable() {
+    return TransformLandmarksParamTypeTable();
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+  TransformLandmarksParamT *UnPack(const flatbuffers::resolver_function_t *_resolver = nullptr) const;
+  void UnPackTo(TransformLandmarksParamT *_o, const flatbuffers::resolver_function_t *_resolver = nullptr) const;
+  static flatbuffers::Offset<TransformLandmarksParam> Pack(flatbuffers::FlatBufferBuilder &_fbb, const TransformLandmarksParamT* _o, const flatbuffers::rehasher_function_t *_rehasher = nullptr);
+};
+
+struct TransformLandmarksParamBuilder {
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  explicit TransformLandmarksParamBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  TransformLandmarksParamBuilder &operator=(const TransformLandmarksParamBuilder &);
+  flatbuffers::Offset<TransformLandmarksParam> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<TransformLandmarksParam>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<TransformLandmarksParam> CreateTransformLandmarksParam(
+    flatbuffers::FlatBufferBuilder &_fbb) {
+  TransformLandmarksParamBuilder builder_(_fbb);
+  return builder_.Finish();
+}
+
+flatbuffers::Offset<TransformLandmarksParam> CreateTransformLandmarksParam(flatbuffers::FlatBufferBuilder &_fbb, const TransformLandmarksParamT *_o, const flatbuffers::rehasher_function_t *_rehasher = nullptr);
+
+struct TransformTensorBilinearParamT : public flatbuffers::NativeTable {
+  typedef TransformTensorBilinearParam TableType;
+  int32_t output_height;
+  int32_t output_width;
+  TransformTensorBilinearParamT()
+      : output_height(0),
+        output_width(0) {
+  }
+};
+
+struct TransformTensorBilinearParam FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TransformTensorBilinearParamT NativeTableType;
+  static const flatbuffers::TypeTable *MiniReflectTypeTable() {
+    return TransformTensorBilinearParamTypeTable();
+  }
+  int32_t output_height() const {
+    return GetField<int32_t>(4, 0);
+  }
+  int32_t output_width() const {
+    return GetField<int32_t>(6, 0);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int32_t>(verifier, 4) &&
+           VerifyField<int32_t>(verifier, 6) &&
+           verifier.EndTable();
+  }
+  TransformTensorBilinearParamT *UnPack(const flatbuffers::resolver_function_t *_resolver = nullptr) const;
+  void UnPackTo(TransformTensorBilinearParamT *_o, const flatbuffers::resolver_function_t *_resolver = nullptr) const;
+  static flatbuffers::Offset<TransformTensorBilinearParam> Pack(flatbuffers::FlatBufferBuilder &_fbb, const TransformTensorBilinearParamT* _o, const flatbuffers::rehasher_function_t *_rehasher = nullptr);
+};
+
+struct TransformTensorBilinearParamBuilder {
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_output_height(int32_t output_height) {
+    fbb_.AddElement<int32_t>(4, output_height, 0);
+  }
+  void add_output_width(int32_t output_width) {
+    fbb_.AddElement<int32_t>(6, output_width, 0);
+  }
+  explicit TransformTensorBilinearParamBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  TransformTensorBilinearParamBuilder &operator=(const TransformTensorBilinearParamBuilder &);
+  flatbuffers::Offset<TransformTensorBilinearParam> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<TransformTensorBilinearParam>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<TransformTensorBilinearParam> CreateTransformTensorBilinearParam(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t output_height = 0,
+    int32_t output_width = 0) {
+  TransformTensorBilinearParamBuilder builder_(_fbb);
+  builder_.add_output_width(output_width);
+  builder_.add_output_height(output_height);
+  return builder_.Finish();
+}
+
+flatbuffers::Offset<TransformTensorBilinearParam> CreateTransformTensorBilinearParam(flatbuffers::FlatBufferBuilder &_fbb, const TransformTensorBilinearParamT *_o, const flatbuffers::rehasher_function_t *_rehasher = nullptr);
+
 inline TensorConvertInfoT *TensorConvertInfo::UnPack(const flatbuffers::resolver_function_t *_resolver) const {
   auto _o = new TensorConvertInfoT();
   UnPackTo(_o, _resolver);
@@ -643,6 +897,105 @@ inline flatbuffers::Offset<ImageProcessParam> CreateImageProcessParam(flatbuffer
       _shape,
       _outputType,
       _draw);
+}
+
+inline Landmarks2TransformMatrixParamT *Landmarks2TransformMatrixParam::UnPack(const flatbuffers::resolver_function_t *_resolver) const {
+  auto _o = new Landmarks2TransformMatrixParamT();
+  UnPackTo(_o, _resolver);
+  return _o;
+}
+
+inline void Landmarks2TransformMatrixParam::UnPackTo(Landmarks2TransformMatrixParamT *_o, const flatbuffers::resolver_function_t *_resolver) const {
+  (void)_o;
+  (void)_resolver;
+  { auto _e = left_rotation_idx(); _o->left_rotation_idx = _e; };
+  { auto _e = output_height(); _o->output_height = _e; };
+  { auto _e = output_width(); _o->output_width = _e; };
+  { auto _e = right_rotation_idx(); _o->right_rotation_idx = _e; };
+  { auto _e = scale_x(); _o->scale_x = _e; };
+  { auto _e = scale_y(); _o->scale_y = _e; };
+  { auto _e = subset_idxs(); if (_e) { _o->subset_idxs.resize(_e->size()); for (flatbuffers::uoffset_t _i = 0; _i < _e->size(); _i++) { _o->subset_idxs[_i] = _e->Get(_i); } } };
+  { auto _e = target_rotation_radians(); _o->target_rotation_radians = _e; };
+}
+
+inline flatbuffers::Offset<Landmarks2TransformMatrixParam> Landmarks2TransformMatrixParam::Pack(flatbuffers::FlatBufferBuilder &_fbb, const Landmarks2TransformMatrixParamT* _o, const flatbuffers::rehasher_function_t *_rehasher) {
+  return CreateLandmarks2TransformMatrixParam(_fbb, _o, _rehasher);
+}
+
+inline flatbuffers::Offset<Landmarks2TransformMatrixParam> CreateLandmarks2TransformMatrixParam(flatbuffers::FlatBufferBuilder &_fbb, const Landmarks2TransformMatrixParamT *_o, const flatbuffers::rehasher_function_t *_rehasher) {
+  (void)_rehasher;
+  (void)_o;
+  struct _VectorArgs { flatbuffers::FlatBufferBuilder *__fbb; const Landmarks2TransformMatrixParamT* __o; const flatbuffers::rehasher_function_t *__rehasher; } _va = { &_fbb, _o, _rehasher}; (void)_va;
+  auto _left_rotation_idx = _o->left_rotation_idx;
+  auto _output_height = _o->output_height;
+  auto _output_width = _o->output_width;
+  auto _right_rotation_idx = _o->right_rotation_idx;
+  auto _scale_x = _o->scale_x;
+  auto _scale_y = _o->scale_y;
+  auto _subset_idxs = _o->subset_idxs.size() ? _fbb.CreateVector(_o->subset_idxs) : 0;
+  auto _target_rotation_radians = _o->target_rotation_radians;
+  return MNN::CreateLandmarks2TransformMatrixParam(
+      _fbb,
+      _left_rotation_idx,
+      _output_height,
+      _output_width,
+      _right_rotation_idx,
+      _scale_x,
+      _scale_y,
+      _subset_idxs,
+      _target_rotation_radians);
+}
+
+inline TransformLandmarksParamT *TransformLandmarksParam::UnPack(const flatbuffers::resolver_function_t *_resolver) const {
+  auto _o = new TransformLandmarksParamT();
+  UnPackTo(_o, _resolver);
+  return _o;
+}
+
+inline void TransformLandmarksParam::UnPackTo(TransformLandmarksParamT *_o, const flatbuffers::resolver_function_t *_resolver) const {
+  (void)_o;
+  (void)_resolver;
+}
+
+inline flatbuffers::Offset<TransformLandmarksParam> TransformLandmarksParam::Pack(flatbuffers::FlatBufferBuilder &_fbb, const TransformLandmarksParamT* _o, const flatbuffers::rehasher_function_t *_rehasher) {
+  return CreateTransformLandmarksParam(_fbb, _o, _rehasher);
+}
+
+inline flatbuffers::Offset<TransformLandmarksParam> CreateTransformLandmarksParam(flatbuffers::FlatBufferBuilder &_fbb, const TransformLandmarksParamT *_o, const flatbuffers::rehasher_function_t *_rehasher) {
+  (void)_rehasher;
+  (void)_o;
+  struct _VectorArgs { flatbuffers::FlatBufferBuilder *__fbb; const TransformLandmarksParamT* __o; const flatbuffers::rehasher_function_t *__rehasher; } _va = { &_fbb, _o, _rehasher}; (void)_va;
+  return MNN::CreateTransformLandmarksParam(
+      _fbb);
+}
+
+inline TransformTensorBilinearParamT *TransformTensorBilinearParam::UnPack(const flatbuffers::resolver_function_t *_resolver) const {
+  auto _o = new TransformTensorBilinearParamT();
+  UnPackTo(_o, _resolver);
+  return _o;
+}
+
+inline void TransformTensorBilinearParam::UnPackTo(TransformTensorBilinearParamT *_o, const flatbuffers::resolver_function_t *_resolver) const {
+  (void)_o;
+  (void)_resolver;
+  { auto _e = output_height(); _o->output_height = _e; };
+  { auto _e = output_width(); _o->output_width = _e; };
+}
+
+inline flatbuffers::Offset<TransformTensorBilinearParam> TransformTensorBilinearParam::Pack(flatbuffers::FlatBufferBuilder &_fbb, const TransformTensorBilinearParamT* _o, const flatbuffers::rehasher_function_t *_rehasher) {
+  return CreateTransformTensorBilinearParam(_fbb, _o, _rehasher);
+}
+
+inline flatbuffers::Offset<TransformTensorBilinearParam> CreateTransformTensorBilinearParam(flatbuffers::FlatBufferBuilder &_fbb, const TransformTensorBilinearParamT *_o, const flatbuffers::rehasher_function_t *_rehasher) {
+  (void)_rehasher;
+  (void)_o;
+  struct _VectorArgs { flatbuffers::FlatBufferBuilder *__fbb; const TransformTensorBilinearParamT* __o; const flatbuffers::rehasher_function_t *__rehasher; } _va = { &_fbb, _o, _rehasher}; (void)_va;
+  auto _output_height = _o->output_height;
+  auto _output_width = _o->output_width;
+  return MNN::CreateTransformTensorBilinearParam(
+      _fbb,
+      _output_height,
+      _output_width);
 }
 
 inline const flatbuffers::TypeTable *SampleModeTypeTable() {
@@ -841,6 +1194,55 @@ inline const flatbuffers::TypeTable *ImageProcessParamTypeTable() {
   };
   static const flatbuffers::TypeTable tt = {
     flatbuffers::ST_TABLE, 11, type_codes, type_refs, nullptr, names
+  };
+  return &tt;
+}
+
+inline const flatbuffers::TypeTable *Landmarks2TransformMatrixParamTypeTable() {
+  static const flatbuffers::TypeCode type_codes[] = {
+    { flatbuffers::ET_INT, 0, -1 },
+    { flatbuffers::ET_INT, 0, -1 },
+    { flatbuffers::ET_INT, 0, -1 },
+    { flatbuffers::ET_INT, 0, -1 },
+    { flatbuffers::ET_FLOAT, 0, -1 },
+    { flatbuffers::ET_FLOAT, 0, -1 },
+    { flatbuffers::ET_INT, 1, -1 },
+    { flatbuffers::ET_FLOAT, 0, -1 }
+  };
+  static const char * const names[] = {
+    "left_rotation_idx",
+    "output_height",
+    "output_width",
+    "right_rotation_idx",
+    "scale_x",
+    "scale_y",
+    "subset_idxs",
+    "target_rotation_radians"
+  };
+  static const flatbuffers::TypeTable tt = {
+    flatbuffers::ST_TABLE, 8, type_codes, nullptr, nullptr, names
+  };
+  return &tt;
+}
+
+inline const flatbuffers::TypeTable *TransformLandmarksParamTypeTable() {
+  static const flatbuffers::TypeTable tt = {
+    flatbuffers::ST_TABLE, 0, nullptr, nullptr, nullptr, nullptr
+  };
+  return &tt;
+}
+
+inline const flatbuffers::TypeTable *TransformTensorBilinearParamTypeTable() {
+  static const flatbuffers::TypeCode type_codes[] = {
+    { flatbuffers::ET_INT, 0, -1 },
+    { flatbuffers::ET_INT, 0, -1 }
+  };
+  static const char * const names[] = {
+    "output_height",
+    "output_width"
+  };
+  static const flatbuffers::TypeTable tt = {
+    flatbuffers::ST_TABLE, 2, type_codes, nullptr, nullptr, names
   };
   return &tt;
 }

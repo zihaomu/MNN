@@ -3436,6 +3436,7 @@ struct LSTMBlockCellT : public flatbuffers::NativeTable {
       : cell_clip(3.0f),
         forget_bias(1.0f),
         use_peephole(false) {
+      int a = 1;
   }
 };
 

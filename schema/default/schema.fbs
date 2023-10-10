@@ -225,6 +225,10 @@ table Tensor {
 // set of acceptable options.
 // LINT.IfChange
 enum BuiltinOperator : byte {
+
+    Landmarks2TransformMatrix = -3,
+    TransformTensorBilinear = -2,
+    TransformLandmarks = -1,
   ADD = 0,
   AVERAGE_POOL_2D = 1,
   CONCATENATION = 2,
@@ -476,8 +480,6 @@ union BuiltinOptions {
   VarHandleOptions,
   ReadVariableOptions,
   AssignVariableOptions,
-  Landmarks2TransformMatrixOptions,
-  TransformTensorBilinearOptions,
 }
 
 enum Padding : byte { SAME, VALID }
@@ -489,25 +491,6 @@ enum ActivationFunctionType : byte {
   RELU6 = 3,
   TANH = 4,
   SIGN_BIT = 5,
-}
-
-table Landmarks2TransformMatrixOptions {
-    left_rotation_idx: int;
-    output_height: int;
-    output_width: int;
-    right_rotation_idx: int;
-    scale_x: float;
-    scale_y: float;
-    subset_idxs:[int];
-    target_rotation_radians: float;
-}
-
-table TransformLandmarksOptions {
-}
-
-table TransformTensorBilinearOptions {
-    output_height: int;
-    output_width: int;
 }
 
 table Conv2DOptions {
