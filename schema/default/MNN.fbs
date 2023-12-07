@@ -168,6 +168,10 @@ enum OpType : int {
     Svd = 153,
     Histogram = 154,
 
+    Landmarks2TransformMatrix = 176,
+    TransformTensorBilinear = 177,
+    TransformLandmarks = 178,
+
     Plugin = 256, //The Type load from plugin
     //Training Op Start from 257
     Select = 257,
@@ -385,6 +389,9 @@ union OpParameter {
     RandomUniform,
     LayerNorm,
     TensorArray,
+    Landmarks2TransformMatrixParam,
+    TransformTensorBilinearParam,
+    TransformLandmarksParam,
     LSTMBlockCell,
     GridSample,
     LoopParam,
