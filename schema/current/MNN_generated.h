@@ -238,6 +238,9 @@ enum OpType {
   OpType_Histogram = 154,
   OpType_QuantizeLinear = 155,
   OpType_DequantizeLinear = 156,
+  OpType_Landmarks2TransformMatrix = 176,
+  OpType_TransformTensorBilinear = 177,
+  OpType_TransformLandmarks = 178,
   OpType_Plugin = 256,
   OpType_Select = 257,
   OpType_ZerosLike = 258,
@@ -267,7 +270,7 @@ enum OpType {
   OpType_MAX = OpType_GridSample
 };
 
-inline const OpType (&EnumValuesOpType())[177] {
+inline const OpType (&EnumValuesOpType())[180] {
   static const OpType values[] = {
     OpType_AbsVal,
     OpType_QuantizedAdd,
@@ -421,6 +424,9 @@ inline const OpType (&EnumValuesOpType())[177] {
     OpType_Histogram,
     OpType_QuantizeLinear,
     OpType_DequantizeLinear,
+    OpType_Landmarks2TransformMatrix,
+    OpType_TransformTensorBilinear,
+    OpType_TransformLandmarks,
     OpType_Plugin,
     OpType_Select,
     OpType_ZerosLike,
@@ -628,9 +634,9 @@ inline const char * const *EnumNamesOpType() {
     "",
     "",
     "",
-    "",
-    "",
-    "",
+    "Landmarks2TransformMatrix",
+    "TransformTensorBilinear",
+    "TransformLandmarks",
     "",
     "",
     "",
@@ -1159,18 +1165,21 @@ enum OpParameter {
   OpParameter_RandomUniform = 87,
   OpParameter_LayerNorm = 88,
   OpParameter_TensorArray = 89,
-  OpParameter_LSTMBlockCell = 90,
-  OpParameter_GridSample = 91,
-  OpParameter_LoopParam = 92,
-  OpParameter_ImageProcessParam = 93,
-  OpParameter_CumSum = 94,
-  OpParameter_QuantizeLinear = 95,
-  OpParameter_DequantizeLinear = 96,
+  OpParameter_Landmarks2TransformMatrixParam = 90,
+  OpParameter_TransformTensorBilinearParam = 91,
+  OpParameter_TransformLandmarksParam = 92,
+  OpParameter_LSTMBlockCell = 93,
+  OpParameter_GridSample = 94,
+  OpParameter_LoopParam = 95,
+  OpParameter_ImageProcessParam = 96,
+  OpParameter_CumSum = 97,
+  OpParameter_QuantizeLinear = 98,
+  OpParameter_DequantizeLinear = 99,
   OpParameter_MIN = OpParameter_NONE,
   OpParameter_MAX = OpParameter_DequantizeLinear
 };
 
-inline const OpParameter (&EnumValuesOpParameter())[97] {
+inline const OpParameter (&EnumValuesOpParameter())[100] {
   static const OpParameter values[] = {
     OpParameter_NONE,
     OpParameter_QuantizedAdd,
@@ -1262,6 +1271,9 @@ inline const OpParameter (&EnumValuesOpParameter())[97] {
     OpParameter_RandomUniform,
     OpParameter_LayerNorm,
     OpParameter_TensorArray,
+    OpParameter_Landmarks2TransformMatrixParam,
+    OpParameter_TransformTensorBilinearParam,
+    OpParameter_TransformLandmarksParam,
     OpParameter_LSTMBlockCell,
     OpParameter_GridSample,
     OpParameter_LoopParam,
@@ -1365,6 +1377,9 @@ inline const char * const *EnumNamesOpParameter() {
     "RandomUniform",
     "LayerNorm",
     "TensorArray",
+    "Landmarks2TransformMatrixParam",
+    "TransformTensorBilinearParam",
+    "TransformLandmarksParam",
     "LSTMBlockCell",
     "GridSample",
     "LoopParam",
@@ -1741,6 +1756,18 @@ template<> struct OpParameterTraits<LayerNorm> {
 
 template<> struct OpParameterTraits<TensorArray> {
   static const OpParameter enum_value = OpParameter_TensorArray;
+};
+
+template<> struct OpParameterTraits<Landmarks2TransformMatrixParam> {
+  static const OpParameter enum_value = OpParameter_Landmarks2TransformMatrixParam;
+};
+
+template<> struct OpParameterTraits<TransformTensorBilinearParam> {
+  static const OpParameter enum_value = OpParameter_TransformTensorBilinearParam;
+};
+
+template<> struct OpParameterTraits<TransformLandmarksParam> {
+  static const OpParameter enum_value = OpParameter_TransformLandmarksParam;
 };
 
 template<> struct OpParameterTraits<LSTMBlockCell> {
@@ -2513,6 +2540,30 @@ struct OpParameterUnion {
   const TensorArrayT *AsTensorArray() const {
     return type == OpParameter_TensorArray ?
       reinterpret_cast<const TensorArrayT *>(value) : nullptr;
+  }
+  Landmarks2TransformMatrixParamT *AsLandmarks2TransformMatrixParam() {
+    return type == OpParameter_Landmarks2TransformMatrixParam ?
+      reinterpret_cast<Landmarks2TransformMatrixParamT *>(value) : nullptr;
+  }
+  const Landmarks2TransformMatrixParamT *AsLandmarks2TransformMatrixParam() const {
+    return type == OpParameter_Landmarks2TransformMatrixParam ?
+      reinterpret_cast<const Landmarks2TransformMatrixParamT *>(value) : nullptr;
+  }
+  TransformTensorBilinearParamT *AsTransformTensorBilinearParam() {
+    return type == OpParameter_TransformTensorBilinearParam ?
+      reinterpret_cast<TransformTensorBilinearParamT *>(value) : nullptr;
+  }
+  const TransformTensorBilinearParamT *AsTransformTensorBilinearParam() const {
+    return type == OpParameter_TransformTensorBilinearParam ?
+      reinterpret_cast<const TransformTensorBilinearParamT *>(value) : nullptr;
+  }
+  TransformLandmarksParamT *AsTransformLandmarksParam() {
+    return type == OpParameter_TransformLandmarksParam ?
+      reinterpret_cast<TransformLandmarksParamT *>(value) : nullptr;
+  }
+  const TransformLandmarksParamT *AsTransformLandmarksParam() const {
+    return type == OpParameter_TransformLandmarksParam ?
+      reinterpret_cast<const TransformLandmarksParamT *>(value) : nullptr;
   }
   LSTMBlockCellT *AsLSTMBlockCell() {
     return type == OpParameter_LSTMBlockCell ?
@@ -3618,6 +3669,15 @@ struct Op FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const TensorArray *main_as_TensorArray() const {
     return main_type() == OpParameter_TensorArray ? static_cast<const TensorArray *>(main()) : nullptr;
   }
+  const Landmarks2TransformMatrixParam *main_as_Landmarks2TransformMatrixParam() const {
+    return main_type() == OpParameter_Landmarks2TransformMatrixParam ? static_cast<const Landmarks2TransformMatrixParam *>(main()) : nullptr;
+  }
+  const TransformTensorBilinearParam *main_as_TransformTensorBilinearParam() const {
+    return main_type() == OpParameter_TransformTensorBilinearParam ? static_cast<const TransformTensorBilinearParam *>(main()) : nullptr;
+  }
+  const TransformLandmarksParam *main_as_TransformLandmarksParam() const {
+    return main_type() == OpParameter_TransformLandmarksParam ? static_cast<const TransformLandmarksParam *>(main()) : nullptr;
+  }
   const LSTMBlockCell *main_as_LSTMBlockCell() const {
     return main_type() == OpParameter_LSTMBlockCell ? static_cast<const LSTMBlockCell *>(main()) : nullptr;
   }
@@ -4025,6 +4085,18 @@ template<> inline const LayerNorm *Op::main_as<LayerNorm>() const {
 
 template<> inline const TensorArray *Op::main_as<TensorArray>() const {
   return main_as_TensorArray();
+}
+
+template<> inline const Landmarks2TransformMatrixParam *Op::main_as<Landmarks2TransformMatrixParam>() const {
+  return main_as_Landmarks2TransformMatrixParam();
+}
+
+template<> inline const TransformTensorBilinearParam *Op::main_as<TransformTensorBilinearParam>() const {
+  return main_as_TransformTensorBilinearParam();
+}
+
+template<> inline const TransformLandmarksParam *Op::main_as<TransformLandmarksParam>() const {
+  return main_as_TransformLandmarksParam();
 }
 
 template<> inline const LSTMBlockCell *Op::main_as<LSTMBlockCell>() const {
@@ -5656,6 +5728,18 @@ inline bool VerifyOpParameter(flatbuffers::Verifier &verifier, const void *obj, 
       auto ptr = reinterpret_cast<const TensorArray *>(obj);
       return verifier.VerifyTable(ptr);
     }
+    case OpParameter_Landmarks2TransformMatrixParam: {
+      auto ptr = reinterpret_cast<const Landmarks2TransformMatrixParam *>(obj);
+      return verifier.VerifyTable(ptr);
+    }
+    case OpParameter_TransformTensorBilinearParam: {
+      auto ptr = reinterpret_cast<const TransformTensorBilinearParam *>(obj);
+      return verifier.VerifyTable(ptr);
+    }
+    case OpParameter_TransformLandmarksParam: {
+      auto ptr = reinterpret_cast<const TransformLandmarksParam *>(obj);
+      return verifier.VerifyTable(ptr);
+    }
     case OpParameter_LSTMBlockCell: {
       auto ptr = reinterpret_cast<const LSTMBlockCell *>(obj);
       return verifier.VerifyTable(ptr);
@@ -6058,6 +6142,18 @@ inline void *OpParameterUnion::UnPack(const void *obj, OpParameter type, const f
       auto ptr = reinterpret_cast<const TensorArray *>(obj);
       return ptr->UnPack(resolver);
     }
+    case OpParameter_Landmarks2TransformMatrixParam: {
+      auto ptr = reinterpret_cast<const Landmarks2TransformMatrixParam *>(obj);
+      return ptr->UnPack(resolver);
+    }
+    case OpParameter_TransformTensorBilinearParam: {
+      auto ptr = reinterpret_cast<const TransformTensorBilinearParam *>(obj);
+      return ptr->UnPack(resolver);
+    }
+    case OpParameter_TransformLandmarksParam: {
+      auto ptr = reinterpret_cast<const TransformLandmarksParam *>(obj);
+      return ptr->UnPack(resolver);
+    }
     case OpParameter_LSTMBlockCell: {
       auto ptr = reinterpret_cast<const LSTMBlockCell *>(obj);
       return ptr->UnPack(resolver);
@@ -6448,6 +6544,18 @@ inline flatbuffers::Offset<void> OpParameterUnion::Pack(flatbuffers::FlatBufferB
       auto ptr = reinterpret_cast<const TensorArrayT *>(value);
       return CreateTensorArray(_fbb, ptr, _rehasher).Union();
     }
+    case OpParameter_Landmarks2TransformMatrixParam: {
+      auto ptr = reinterpret_cast<const Landmarks2TransformMatrixParamT *>(value);
+      return CreateLandmarks2TransformMatrixParam(_fbb, ptr, _rehasher).Union();
+    }
+    case OpParameter_TransformTensorBilinearParam: {
+      auto ptr = reinterpret_cast<const TransformTensorBilinearParamT *>(value);
+      return CreateTransformTensorBilinearParam(_fbb, ptr, _rehasher).Union();
+    }
+    case OpParameter_TransformLandmarksParam: {
+      auto ptr = reinterpret_cast<const TransformLandmarksParamT *>(value);
+      return CreateTransformLandmarksParam(_fbb, ptr, _rehasher).Union();
+    }
     case OpParameter_LSTMBlockCell: {
       auto ptr = reinterpret_cast<const LSTMBlockCellT *>(value);
       return CreateLSTMBlockCell(_fbb, ptr, _rehasher).Union();
@@ -6836,6 +6944,18 @@ inline OpParameterUnion::OpParameterUnion(const OpParameterUnion &u) FLATBUFFERS
     }
     case OpParameter_TensorArray: {
       value = new TensorArrayT(*reinterpret_cast<TensorArrayT *>(u.value));
+      break;
+    }
+    case OpParameter_Landmarks2TransformMatrixParam: {
+      value = new Landmarks2TransformMatrixParamT(*reinterpret_cast<Landmarks2TransformMatrixParamT *>(u.value));
+      break;
+    }
+    case OpParameter_TransformTensorBilinearParam: {
+      value = new TransformTensorBilinearParamT(*reinterpret_cast<TransformTensorBilinearParamT *>(u.value));
+      break;
+    }
+    case OpParameter_TransformLandmarksParam: {
+      value = new TransformLandmarksParamT(*reinterpret_cast<TransformLandmarksParamT *>(u.value));
       break;
     }
     case OpParameter_LSTMBlockCell: {
@@ -7318,6 +7438,21 @@ inline void OpParameterUnion::Reset() {
       delete ptr;
       break;
     }
+    case OpParameter_Landmarks2TransformMatrixParam: {
+      auto ptr = reinterpret_cast<Landmarks2TransformMatrixParamT *>(value);
+      delete ptr;
+      break;
+    }
+    case OpParameter_TransformTensorBilinearParam: {
+      auto ptr = reinterpret_cast<TransformTensorBilinearParamT *>(value);
+      delete ptr;
+      break;
+    }
+    case OpParameter_TransformLandmarksParam: {
+      auto ptr = reinterpret_cast<TransformLandmarksParamT *>(value);
+      delete ptr;
+      break;
+    }
     case OpParameter_LSTMBlockCell: {
       auto ptr = reinterpret_cast<LSTMBlockCellT *>(value);
       delete ptr;
@@ -7537,12 +7672,15 @@ inline const flatbuffers::TypeTable *OpTypeTypeTable() {
     { flatbuffers::ET_INT, 0, 0 },
     { flatbuffers::ET_INT, 0, 0 },
     { flatbuffers::ET_INT, 0, 0 },
+    { flatbuffers::ET_INT, 0, 0 },
+    { flatbuffers::ET_INT, 0, 0 },
+    { flatbuffers::ET_INT, 0, 0 },
     { flatbuffers::ET_INT, 0, 0 }
   };
   static const flatbuffers::TypeFunction type_refs[] = {
     OpTypeTypeTable
   };
-  static const int64_t values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 512, 513, 514, 515, 516, 517, 518, 600, 601, 603, 604 };
+  static const int64_t values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 176, 177, 178, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 512, 513, 514, 515, 516, 517, 518, 600, 601, 603, 604 };
   static const char * const names[] = {
     "AbsVal",
     "QuantizedAdd",
@@ -7696,6 +7834,9 @@ inline const flatbuffers::TypeTable *OpTypeTypeTable() {
     "Histogram",
     "QuantizeLinear",
     "DequantizeLinear",
+    "Landmarks2TransformMatrix",
+    "TransformTensorBilinear",
+    "TransformLandmarks",
     "Plugin",
     "Select",
     "ZerosLike",
@@ -7723,7 +7864,7 @@ inline const flatbuffers::TypeTable *OpTypeTypeTable() {
     "GridSample"
   };
   static const flatbuffers::TypeTable tt = {
-    flatbuffers::ST_ENUM, 177, type_codes, type_refs, values, names
+    flatbuffers::ST_ENUM, 180, type_codes, type_refs, values, names
   };
   return &tt;
 }
@@ -7826,7 +7967,10 @@ inline const flatbuffers::TypeTable *OpParameterTypeTable() {
     { flatbuffers::ET_SEQUENCE, 0, 92 },
     { flatbuffers::ET_SEQUENCE, 0, 93 },
     { flatbuffers::ET_SEQUENCE, 0, 94 },
-    { flatbuffers::ET_SEQUENCE, 0, 95 }
+    { flatbuffers::ET_SEQUENCE, 0, 95 },
+    { flatbuffers::ET_SEQUENCE, 0, 96 },
+    { flatbuffers::ET_SEQUENCE, 0, 97 },
+    { flatbuffers::ET_SEQUENCE, 0, 98 }
   };
   static const flatbuffers::TypeFunction type_refs[] = {
     QuantizedAddTypeTable,
@@ -7918,6 +8062,9 @@ inline const flatbuffers::TypeTable *OpParameterTypeTable() {
     RandomUniformTypeTable,
     LayerNormTypeTable,
     TensorArrayTypeTable,
+    Landmarks2TransformMatrixParamTypeTable,
+    TransformTensorBilinearParamTypeTable,
+    TransformLandmarksParamTypeTable,
     LSTMBlockCellTypeTable,
     GridSampleTypeTable,
     LoopParamTypeTable,
@@ -8017,6 +8164,9 @@ inline const flatbuffers::TypeTable *OpParameterTypeTable() {
     "RandomUniform",
     "LayerNorm",
     "TensorArray",
+    "Landmarks2TransformMatrixParam",
+    "TransformTensorBilinearParam",
+    "TransformLandmarksParam",
     "LSTMBlockCell",
     "GridSample",
     "LoopParam",
@@ -8026,7 +8176,7 @@ inline const flatbuffers::TypeTable *OpParameterTypeTable() {
     "DequantizeLinear"
   };
   static const flatbuffers::TypeTable tt = {
-    flatbuffers::ST_UNION, 97, type_codes, type_refs, nullptr, names
+    flatbuffers::ST_UNION, 100, type_codes, type_refs, nullptr, names
   };
   return &tt;
 }

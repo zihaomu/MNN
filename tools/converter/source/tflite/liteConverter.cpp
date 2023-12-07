@@ -178,7 +178,7 @@ int tflite2MNNNet(const std::string inputModel, const std::string bizCode,
         const int opNums = ops.size();
         for (int j = 0; j < opNums; ++j) {
             const int opcodeIndex = ops[j]->opcode_index;
-            const auto opCode     = tfliteOpSet[opcodeIndex]->builtin_code;
+            auto opCode     = tfliteOpSet[opcodeIndex]->builtin_code;
             if (needExtractInput(opCode)) {
                 for (auto input : ops[j]->inputs) {
                     if (input < 0 || extractedTensors[input]) {
@@ -239,24 +239,45 @@ int tflite2MNNNet(const std::string inputModel, const std::string bizCode,
                 }
             }
 
+            MNN::OpT* op = new MNN::OpT;
 
-            if (opCode == tflite::BuiltinOperator_CUSTOM) {
+            // tflite op to MNN op
+            op->name      = tensors[ops[j]->outputs[0]]->name;
+
+            // TODEL : Hack the custom Op
+            std::string mmp_landmark = "landmarks_to_transform";
+            std::string mmp_transformTensorBilinear = "transform_tensor_bilinear";
+            std::string mmp_transfor2Landmark = "transform_landmarks";
+
+            liteOpConverter* creator = nullptr;
+
+            if (op->name.compare(0, mmp_landmark.length(), mmp_landmark) == 0)
+                opCode = tflite::BuiltinOperator_Landmarks2TransformMatrix;
+            else if (op->name.compare(0, mmp_transformTensorBilinear.length(), mmp_transformTensorBilinear) == 0)
+                opCode = tflite::BuiltinOperator_TransformTensorBilinear;
+            else if (op->name.compare(0, mmp_transfor2Landmark.length(), mmp_transfor2Landmark) == 0)
+                opCode = tflite::BuiltinOperator_TransformLandmarks;
+
+            // std::cout<<"opCode "<< opCode<<", op Name "<<op->name<<std::endl;
+            if (opCode == tflite::BuiltinOperator_CUSTOM ||
+                        opCode == tflite::BuiltinOperator_Landmarks2TransformMatrix ||
+                        opCode == tflite::BuiltinOperator_TransformTensorBilinear ||
+                    opCode == tflite::BuiltinOperator_TransformLandmarks) {
                 const int inputSize = ops[j]->inputs.size();
                 for (int k = 0; k < inputSize; ++k) {
                     _converteConstantDataToMNNConstantNode(ops[j]->inputs[k], tensors, tfliteModelBuffer, MNNNetT);
                 }
             }
 
-            MNN::OpT* op = new MNN::OpT;
-            auto creator = liteOpConverterSuit::get()->search(opCode);
+            creator = liteOpConverterSuit::get()->search(opCode);
+
             DCHECK(creator) << "NOT_SUPPORTED_OP: [ " << tflite::EnumNameBuiltinOperator(opCode) << " ]";
             if (nullptr == creator) {
                 // Has error, reset net
                 MNNNetT.reset();
                 return 0;
             }
-            // tflite op to MNN op
-            op->name      = tensors[ops[j]->outputs[0]]->name;
+
             op->type      = creator->opType(quantizedModel);
             op->main.type = creator->type(quantizedModel);
             // set default input output index
@@ -289,8 +310,20 @@ int tflite2MNNNet(const std::string inputModel, const std::string bizCode,
                 op->outputIndexes[i] = ops[j]->outputs[i];
                 insertQuantinfo(ops[j]->outputs[i]);
             }
+
+            if (op->type == MNN::OpType_MAX)
+            {
+                std::cout<<"OpType_MAX error";
+            }
+
             // Run actual conversion
             creator->run(op, ops[j], tensors, tfliteModelBuffer, tfliteOpSet, quantizedModel);
+
+//            if (opCode == 0)
+//            {
+//                std::cout<<"op "<<op->defaultDimentionFormat<<std::endl;
+//            }
+
             if (op->type == MNN::OpType_MAX) {
                 // Has error, reset net
                 MNNNetT.reset();

@@ -66,3 +66,22 @@ table ImageProcessParam {
     outputType:DataType;
     draw:bool = false;
 }
+
+table Landmarks2TransformMatrixParam {
+    left_rotation_idx: int;
+    output_height: int;
+    output_width: int;
+    right_rotation_idx: int;
+    scale_x: float;
+    scale_y: float;
+    subset_idxs:[int];
+    target_rotation_radians: float;
+}
+
+table TransformLandmarksParam {
+}
+
+table TransformTensorBilinearParam {
+    output_height: int;
+    output_width: int;
+}
