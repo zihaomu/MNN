@@ -1022,6 +1022,16 @@ ErrorCode Pipeline::execute() {
         for (auto& cmdP : buffer.command) {
             auto& cmd = *cmdP;
             auto code = cmd.execution->onExecute(cmd.workInputs, cmd.workOutputs);
+
+#ifdef LOG_VERPOSE
+            if (cmd.execution->backend()->type() == MNN_FORWARD_CPU)
+                MNN_PRINT("MOO LOG : run on CPU, layer name = %s \n", cmd.info->name().c_str());
+            else if (cmd.execution->backend()->type() == MNN_FORWARD_OPENCL)
+                MNN_PRINT("MOO LOG : run on OPENCL, layer name = %s \n", cmd.info->name().c_str());
+            else
+                MNN_PRINT("MOO LOG : run on UNKNOW %d, layer name = %s \n", (int)cmd.execution->backend()->type(), cmd.info->name().c_str());
+#endif
+
 // #define LOG_VERPOSE
 #ifdef LOG_VERPOSE
             auto dumpT = [](Tensor* t) {

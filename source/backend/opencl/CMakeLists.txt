@@ -9,7 +9,12 @@
 file(GLOB_RECURSE MNN_OpenCL_SRC ${CMAKE_CURRENT_LIST_DIR}/*)
 
 option(MNN_OPENCL_SIZE_CUT "Disable MNN OpenCL Buffer Opt" OFF)
-option(MNN_OPENCL_PROFILE "Enable MNN OpenCL Kernel Profile" OFF)
+
+if (MNN_HAVE_LOG)
+    option(MNN_OPENCL_PROFILE "Enable MNN OpenCL Kernel Profile" ON)
+else()
+    option(MNN_OPENCL_PROFILE "Enable MNN OpenCL Kernel Profile" OFF)
+endif()
 
 IF (MNN_OPENCL_PROFILE)
     add_definitions(-DENABLE_OPENCL_TIME_PROFILER)
